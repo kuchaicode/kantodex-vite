@@ -1,6 +1,6 @@
 "use client";
-import { useCallback } from 'react';
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import { LucideList, LucideGrid, LucideAlbum, LucideHouse } from 'lucide-react';
 import {
   Card,
@@ -13,19 +13,15 @@ import { Button } from "./ui/button"
 import { Skeleton } from "./ui/skeleton"
 import axios from 'axios';
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-// import { useSearchParams } from 'next/navigation';
-import { Link, redirect, useSearchParams } from "react-router-dom";
-import PokeModal from '../modals/PokeModal';
+import { Link, useSearchParams } from "react-router-dom";
 import { getLocalStorage } from '../hooks/useLocalStorage';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs'
 import { LucideBadgeCheck, LucideBadge } from 'lucide-react';
 import capitalizeFirstLetter from '@/lib/capitalizeFirstLetter';
 
-// type Props = {
-//   name:string
-//   url:string
-// }
-
+type Props = {
+  keyword: string
+}
 
 const fetchPokemon = async ({ pageParam = 0 }) => {
   const limit = pageParam >= 140 ? 11 : 20;
@@ -37,33 +33,17 @@ const fetchPokemon = async ({ pageParam = 0 }) => {
 // Limit: on 140th load 11 to stop properly in Gen1
   
 
-export default function CardData() {
+export default function CardData( {keyword}: Props) {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [displayData, setDisplayData] = useState<any>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'owned'>('all'); 
-  const [updateData, setUpdateData] = useState(false)
-  let [searchParams, setSearchParams] = useSearchParams();
-  const search = searchParams.get('search') || '';
-  const isSearchEmpty = !search || search.length === 0;
+  const [searchParams] = useSearchParams();
+  const isSearchEmpty = !keyword|| keyword. length === 0;
 
-  const isUpdateData = () => {
-    setUpdateData(!updateData)
-  }
-
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      // const params = new URLSearchParams(searchParams?.toString());
-      // params.set(name, value);
-      // setSearchParams(`${name}=${value}`)
-      // return params.toString();
-      return redirect(`/${value}`)
-    },
-    [searchParams]
-  );
-// Added to access modal through search params
+// Note on removed content: isUpdateData no longer needed due to not being modal (check if data changed to update cards live), searchParams streamlined
 
   const { data: completeData } = useQuery({
-  queryKey: ['pokemonList', search],
+  queryKey: ['pokemonList', keyword],
   queryFn: async () => {
     const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=151");
     return response.data;
@@ -103,7 +83,7 @@ export default function CardData() {
       const customData = getLocalStorage(item?.name || "")
       return { ...item, id: i+1, captureData:customData }
     }))
-  }, [search, data, completeData, isSearchEmpty, updateData]);
+  }, [keyword, data, completeData, isSearchEmpty]);
 // empty = incomplete data since incomplete = not fully loaded pokemon (the usual)
 // not empty = search from all
 
@@ -143,7 +123,7 @@ export default function CardData() {
 
   if (isError) {
   console.error("Error! :( Please check:", isError);
-  return <span>Error loading data!</span>;
+  return <h2>Error loading data!</h2>;
   }
 
 //  checks for datecaptured's presence to check if owned or not 
@@ -165,27 +145,28 @@ const filteredData = displayData?.filter((pokemon: any) => {
 
 return (
   <>
-    <div className='absolute flex justify-end top-2 right-5 mt-2 mr-2'>
-      <Button onClick={() => setView(view === 'grid' ? 'list' : 'grid')} className="rounded-md text-xs">
+    <div className='fixed flex top-2 right-20 mt-2 mr-2'>
+      <Button onClick={() => setView(view === 'grid' ? 'list' : 'grid')} className="rounded-md text-xs bg-rose-600 hover:bg-rose-500 active:bg-rose-800">
         <span className='hidden md:inline'>{capitalizeFirstLetter(view)}</span>{view === 'grid' ? <LucideGrid className='ml-2' /> : <LucideList className='ml-2' />}
       </Button>
     </div>
+    {/* Grid-List Toggle end */}
     <Tabs defaultValue="all" className="mx-auto flex flex-col flex-grow">
-      <TabsList className='w-3/4 p-8 mx-auto border border-rose-50 border-opacity-20'>
-        <TabsTrigger value="all" className='flex flex-grow py-4 px-12' onClick={() => setActiveTab('all')}>
+      <TabsList className="w-3/4 p-8 mx-auto border-t-0 border border-rose-500 border-opacity-30">
+        <TabsTrigger value="all" className='flex flex-grow py-4 px-12 text-xl' onClick={() => setActiveTab('all')}>
           <LucideAlbum className='mr-2' />All
         </TabsTrigger>
-        <TabsTrigger value="owned" className='flex flex-grow py-4 px-12' onClick={() => setActiveTab('owned')}>
+        <TabsTrigger value="owned" className='flex flex-grow py-4 px-12 text-xl' onClick={() => setActiveTab('owned')}>
           <LucideHouse className='mr-2' />Owned
         </TabsTrigger>
       </TabsList>
       <TabsContent value="all">
         <div className={`container mx-auto ${view === 'grid' ? 'grid grid-cols-2 lg:grid-cols-4 gap-4 w-3/4' : 'flex flex-col w-1/2'}`}>
           {filteredData?.map((pokemon: any, index: number) => (
-            (pokemon.name.includes(search.toLowerCase()) || isSearchEmpty) && (
+            (pokemon.name.includes(keyword.toLowerCase()) || pokemon?.captureData?.name?.toLowerCase().includes(keyword.toLowerCase()) || isSearchEmpty) && (
               <Link to={`/${pokemon.name}`}>
                 <Card
-                  className={`border border-rose-400 bg-gray-800 ${view === 'list' ? 'flex items-center mb-2' : ''}`}
+                  className={`${view === 'list' ? 'flex items-center mb-2' : ''}`}
                   ref={index === filteredData.length - 1 ? loadMoreRef : null}
                 >
                   {view === 'list' && (
@@ -200,8 +181,8 @@ return (
                   <div className={`${view === 'list' ? 'flex-auto pt-10' : ''}`}>
                     <CardHeader>
                       <CardTitle className="h-10">
-                        <h3 className='text-gray-100 text-sm md:text-xl'><span className='text-gray-300 mr-2'>{pokemon.id}</span>{capitalizeFirstLetter(pokemon.name || '')}</h3>
-                        {pokemon?.captureData && <div className="ml-4 mt-1 text-gray-100 text-xs md:text-sm italic">{`${pokemon?.captureData?.name}`}</div>}
+                        <h3 className='text-sm md:text-xl'><span className='dark:text-gray-200 text-gray-400 mr-2'>{pokemon.id}</span>{capitalizeFirstLetter(pokemon.name || '')}</h3>
+                        {pokemon?.captureData && <div className="inline-block ml-2 pl-4 pr-4 mt-1 text-xs md:text-sm italic rounded-md bg-gray-200">{`${pokemon?.captureData?.name}`}</div>}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className={`align-middle p-3 m-3 border-2 border-black-200 rounded-xl ${view === 'list' ? 'bg-transparent border-none' : 'bg-gray-50'}`}>
@@ -217,7 +198,7 @@ return (
                     </CardContent>
                   </div>
                   <CardFooter>
-                  <span className={`mr-2 ${isOwned(pokemon) ? 'text-green-400' : 'text-gray-300'} items-center justify-center align`}>
+                  <span className={`mr-2 ${isOwned(pokemon) ? 'text-green-400' : 'text-gray-300'} items-center justify-center bg-gray-50 rounded-xl`}>
                     {isOwned(pokemon) ? <LucideBadgeCheck /> : <LucideBadge />} 
                   </span>
                   </CardFooter>
@@ -225,16 +206,17 @@ return (
               </Link>
             )
           ))}
-          {searchParams?.get('pokemon') && <PokeModal pokemon={searchParams.get('pokemon') || ''} isUpdateData={isUpdateData} />}
+
         </div>
       </TabsContent>
       <TabsContent value="owned">
-       <div className={`container mx-auto ${view === 'grid' ? 'grid grid-cols-2 lg:grid-cols-4 gap-4 w-3/4' : 'flex flex-col w-1/2'}`}>
+        <div className={`container mx-auto ${view === 'grid' ? 'grid grid-cols-2 lg:grid-cols-4 gap-4 w-3/4' : 'flex flex-col w-1/2'}`}>
+
           {filteredData?.map((pokemon: any, index: number) => (
-            isOwned(pokemon) && (pokemon.name.includes(search.toLowerCase()) || isSearchEmpty) && (
+            isOwned(pokemon) && (pokemon.name.includes(keyword.toLowerCase()) || pokemon?.captureData?.name?.toLowerCase().includes(keyword.toLowerCase()) || isSearchEmpty) && (
               <Link to={`/${pokemon.name}`}>
                 <Card
-                  className={`border border-rose-400 bg-gray-800 ${view === 'list' ? 'flex items-center mb-2' : ''}`}
+                  className={`${view === 'list' ? 'flex items-center mb-2' : ''}`}
                   ref={index === filteredData.length - 1 ? loadMoreRef : null}
                 >
                   {view === 'list' && (
@@ -249,8 +231,8 @@ return (
                   <div className={`${view === 'list' ? 'flex-auto pt-10' : ''}`}>
                     <CardHeader>
                       <CardTitle className="h-10">
-                        <h3 className='text-gray-100 text-sm md:text-xl'><span className='text-gray-300 mr-2'>{pokemon.id}</span>{capitalizeFirstLetter(pokemon.name)}</h3>
-                        {pokemon?.captureData && <div className="ml-4 mt-1 text-gray-100 text-sm italic">{`${pokemon?.captureData?.name}`}</div>}
+                        <h3 className='text-sm md:text-xl'><span className='mr-2 dark:text-gray-200 text-gray-400'>{pokemon.id}</span>{capitalizeFirstLetter(pokemon.name)}</h3>
+                        {pokemon?.captureData && <div className="inline-block ml-2 pl-4 pr-4 mt-1 text-xs md:text-sm italic rounded-md bg-gray-200">{`${pokemon?.captureData?.name}`}</div>}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className={`align-middle p-3 m-3 border-2 border-black-200 rounded-xl ${view === 'list' ? 'bg-transparent border-none' : 'bg-gray-50'}`}>
@@ -266,7 +248,7 @@ return (
                     </CardContent>
                   </div>
                   <CardFooter>
-                  <span className={`mr-2 ${isOwned(pokemon) ? 'text-green-400' : 'text-gray-300'} items-center justify-center align`}>
+                  <span className={`mr-2 ${isOwned(pokemon) ? 'text-green-400' : 'text-gray-300'} items-center justify-center bg-gray-50 rounded-xl`}>
                     {isOwned(pokemon) ? <LucideBadgeCheck /> : <LucideBadge />} 
                   </span>
                   </CardFooter>
@@ -274,7 +256,6 @@ return (
               </Link>
             )
           ))}
-          {searchParams?.get('pokemon') && <PokeModal pokemon={searchParams.get('pokemon') || ''} isUpdateData={isUpdateData} />}
         </div>
       </TabsContent>
     </Tabs>

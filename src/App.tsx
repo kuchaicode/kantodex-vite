@@ -1,16 +1,9 @@
-import { Suspense } from 'react'
-// import { Inter } from "next/font/google";
+import { Suspense, useState } from 'react'
 import "./index.css";
-// import { ThemeProvider } from "./components/ThemeProvider";
 import {
   Routes,
   Route,
   BrowserRouter
-  // Link,
-  // useNavigate,
-  // useLocation,
-  // Navigate,
-  // Outlet,
 } from "react-router-dom";
 import CardData from './components/CardData';
 import PokedataProvider from "./components/PokedataProvider";
@@ -24,6 +17,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [ search, setSearch ] = useState('')
   return (
     <>
       {/* <ThemeProvider
@@ -35,13 +29,12 @@ export default function RootLayout({
         <Suspense>
         <PokedataProvider>
           <BrowserRouter>
-            <Nav />
+            <Nav setSearch={setSearch} />
             <Routes>
-              <Route index element={<CardData />} /> 
+              <Route index element={<CardData keyword={search} />} /> 
               <Route path="/:name" element={<PokePage />} />
             </Routes>
           </BrowserRouter>
-
           {children} 
         </PokedataProvider>
         </Suspense>

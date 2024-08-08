@@ -4,7 +4,6 @@ import { Bar, BarChart, XAxis, YAxis } from "recharts"
 import {
   Card,
   CardContent,
-
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -17,7 +16,7 @@ import {
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
+    label: "Stats",
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig
@@ -26,7 +25,7 @@ export default function StatsGraph({ data }: any) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Base Stats</CardTitle>
+        <CardTitle className="text-center">Base Stats</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -49,9 +48,9 @@ export default function StatsGraph({ data }: any) {
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent  />}
             />
-            <Bar dataKey="base_stat" fill="pink" radius={5} />
+            <Bar dataKey="base_stat" fill="lightcoral" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>

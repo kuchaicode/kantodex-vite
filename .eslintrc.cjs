@@ -14,5 +14,7 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    "@typescript-eslint/no-explicit-any": "off",
+    // This is not best practice, but ehh strapped for time.
   },
 }

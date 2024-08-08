@@ -1,13 +1,11 @@
 "use client"
 
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { LucideSearch } from 'lucide-react'
-// import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { useLocation, useSearchParams, redirect } from 'react-router-dom'
-
 // import ThemeToggle from './lib/ThemeToggle'
 
-const Nav = (props: Props) => {
+const Nav = ({setSearch}: any) => {
     const location = useLocation()
     const searchParams = useSearchParams()
 
@@ -25,15 +23,16 @@ const Nav = (props: Props) => {
 const createQueryString = debounce(useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
+      setSearch (value)
       params.set(name, value)
       redirect(`${location}?${params.toString()}`)
-    },
-    [searchParams, location]
+    }, 
+      [searchParams, location, setSearch]
   ), 500)
-// Searchy function. 500: milliseconds
+// Searchy. Delay of 500 milliseconds
 
   return (
-    <nav className='bg-rose-800 shadow-xl'>
+    <nav className='bg-rose-800 shadow-xl sticky top-0'>
         <div className='mx-auto px-3 py-4 flex justify-between'>
             <div className='flex-grow flex justify-center relative'>
                 <input
