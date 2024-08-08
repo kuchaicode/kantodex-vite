@@ -183,7 +183,7 @@ return (
         <div className={`container mx-auto ${view === 'grid' ? 'grid grid-cols-2 lg:grid-cols-4 gap-4 w-3/4' : 'flex flex-col w-1/2'}`}>
           {filteredData?.map((pokemon: any, index: number) => (
             (pokemon.name.includes(search.toLowerCase()) || isSearchEmpty) && (
-              <Link onClick={createQueryString('pokemon', pokemon.name)} key={pokemon.name} >
+              <Link to={`/${pokemon.name}`}>
                 <Card
                   className={`border border-rose-400 bg-gray-800 ${view === 'list' ? 'flex items-center mb-2' : ''}`}
                   ref={index === filteredData.length - 1 ? loadMoreRef : null}
@@ -232,7 +232,7 @@ return (
        <div className={`container mx-auto ${view === 'grid' ? 'grid grid-cols-2 lg:grid-cols-4 gap-4 w-3/4' : 'flex flex-col w-1/2'}`}>
           {filteredData?.map((pokemon: any, index: number) => (
             isOwned(pokemon) && (pokemon.name.includes(search.toLowerCase()) || isSearchEmpty) && (
-              <Link onClick={() => redirect(`/${createQueryString('pokemon', pokemon.name)}`)} key={pokemon.name} >
+              <Link to={`/${pokemon.name}`}>
                 <Card
                   className={`border border-rose-400 bg-gray-800 ${view === 'list' ? 'flex items-center mb-2' : ''}`}
                   ref={index === filteredData.length - 1 ? loadMoreRef : null}

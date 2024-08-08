@@ -1,5 +1,4 @@
 import { Suspense } from 'react'
-// import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
 import "./index.css";
 // import { ThemeProvider } from "./components/ThemeProvider";
@@ -16,14 +15,9 @@ import {
 import CardData from './components/CardData';
 import PokedataProvider from "./components/PokedataProvider";
 import Nav from "./components/Nav"
+import PokePage from './pages/PokePage';
 
 
-// const inter = Inter({ subsets: ["latin"] });
-
-// export const metadata: Metadata = {
-//   title: "Kantodex",
-//   description: "Generation 1 Pokedex with tracking",
-// };
 
 export default function RootLayout({
   children,
@@ -43,7 +37,8 @@ export default function RootLayout({
           <BrowserRouter>
             <Nav />
             <Routes>
-              <Route index element={<CardData />} />
+              <Route index element={<CardData />} /> 
+              <Route path="/:name" element={<PokePage />} />
             </Routes>
           </BrowserRouter>
 
