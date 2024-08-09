@@ -91,12 +91,12 @@ const deleteCaptureData = (e: any) => {
     const [isOpen, setIsOpen] = useState(false)
 
   return (
-<div className="h-full w-full flex items-center justify-center overflow-y-auto">
-    <div className="p-8 border border-gray-300 border-l-gray-200 border-r-gray-200 border-l-2 border-r-2 w-[60rem] dark:bg-gray-800 bg-gray-100 rounded-lg overflow-y-auto ">
+<div className="flex items-center justify-center overflow-y-auto bg-stone-50 dark:bg-slate-900">
+    <div className="p-8 border-gray-300 dark:border-slate-600 border-2 w-[60rem] dark:bg-gray-800 bg-gray-100 rounded-lg overflow-y-auto ">
         <div className="flex justify-start mb-4">
             <Link
                 to={`/`}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 active:bg-rose-800 focus:ring-rose-300 text-white font-medium rounded-md shadow-sm focus:outline-none"
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 active:bg-rose-800 focus:ring-rose-300 text-white rounded-md shadow-sm focus:outline-none"
             >
                 ⏴ Back
             </Link>
@@ -120,7 +120,7 @@ const deleteCaptureData = (e: any) => {
             ))}
         </span>
         {(value.name && value.dateCaptured) && 
-            <div className="mt-2 px-7 py-3 bg-gray-50 border border-gray-300 rounded-lg text-center">
+            <div className="mt-2 px-7 py-3 bg-gray-50 border border-gray-300 dark:border-gray-600 rounded-lg text-center dark:bg-gray-600">
                 {value.name && 
                 <p className="font-bold dark:text-gray-100">{`Nickname: ${value.name}`}</p>}
                 {value.dateCaptured && 
@@ -130,10 +130,10 @@ const deleteCaptureData = (e: any) => {
         }
       {/* Name + Date Captured above */}
       {/* Form Start: */}
-    <div className="justify-center items-center">
+    <div className="flex justify-center items-center">
         {/* Center? */}
-        <form onSubmit={(e) => saveToLocalStorage(e)} className="mt-4 mb-2 pt-4 rounded-xl dark:bg-gray-600 bg-gray-200 w-full max-w-md">
-            <div className="flex flex-col mb-4">
+        <form onSubmit={(e) => saveToLocalStorage(e)} className="mt-4 mb-2 pt-4 rounded-xl dark:bg-gray-600 bg-gray-200 w-full max-w-md flex-col">
+            <div className="flex flex-col">
                 <div className="flex items-center mb-4 pl-6">
                 <label htmlFor="pokemonName" className="text-sm font-medium dark:text-gray-100 mr-2">Nickname</label>
                 <input
@@ -146,8 +146,8 @@ const deleteCaptureData = (e: any) => {
                 />
                 </div>
             </div>
-            <div className="flex items-center mb-4">
-                <label htmlFor="pokemonCaptureDate" className="text-sm font-medium dark:text-gray-100 mr-2">Date Caught</label>
+            <div className="flex items-center mb-4 pl-6">
+                <label htmlFor="pokemonCaptureDate" className="text-sm font-medium dark:text-gray-100 mr-3">Captured</label>
                 <input
                     id="pokemonCaptureDate"
                     type="date"
@@ -157,14 +157,14 @@ const deleteCaptureData = (e: any) => {
                 />
             {/* For UX reasons. Even without input: it defaults to current day, converted to ISO format then split from T onwards */}
             </div>
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 justify-center">
             <div className="pb-2">
                 <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                     <AlertDialogTrigger asChild>
                         <Button
                         type="button"
                         id="removePokemon"
-                        className='mt-2 mb-4 px-4 py-2 bg-rose-800 font-medium rounded-md shadow-sm hover:bg-rose-700 border-2 border-dashed border-rose-500 active:bg-rose-900'
+                        className='mt-2 mb-4 px-4 py-2 bg-rose-800 font-medium rounded-md shadow-sm hover:bg-rose-700 border-2 border-dashed border-rose-500 active:bg-rose-900 dark:text-white'
                         >
                         Clear Data?
                         </Button>
@@ -177,13 +177,13 @@ const deleteCaptureData = (e: any) => {
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                            <AlertDialogCancel onClick={() => setIsOpen(false)}>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel className="text-white" onClick={() => setIsOpen(false)}>Cancel</AlertDialogCancel>
                             <AlertDialogAction onClick={deleteCaptureData}>Delete Permanently</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                 </AlertDialog>
             </div>
-                <Button type="submit" className="mt-2 mb-4 px-4 py-2 bg-rose-600 hover:bg-rose-500 active:bg-rose-800 font-medium rounded-md shadow-sm focus:ring-2 focus:ring-rose-300">Update Capture Info
+                <Button type="submit" className="mt-2 mb-4 px-4 py-2 bg-rose-600 hover:bg-rose-500 active:bg-rose-800 font-medium rounded-md shadow-sm focus:ring-2 focus:ring-rose-300 dark:text-white">Update Capture Info
                 </Button>
             
         </div>
@@ -193,8 +193,8 @@ const deleteCaptureData = (e: any) => {
     <div className="justify-center">
         <hr />
         <div className="flex justify-around">
-        <p className="p-2"><span className="font-semibold">Height:</span> {(+data?.height / 10)} m</p> 
-        <p className="p-2"><span className="font-semibold">Weight:</span> {(+data?.weight/ 10)} kg</p>
+        <p className="p-2 dark:text-white"><span className="font-semibold">Height:</span> {(+data?.height / 10)} m</p> 
+        <p className="p-2 dark:text-white"><span className="font-semibold">Weight:</span> {(+data?.weight/ 10)} kg</p>
         </div>  
         <StatsGraph data={pokemonStats}/>
         {/* Height and weight are divided because the API data provided is in hectograms */}
