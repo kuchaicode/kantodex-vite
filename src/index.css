@@ -59,8 +59,16 @@
   }
 }
 
+.fullscreen-element {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
 body {
   overflow-y: scroll;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 

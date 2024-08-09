@@ -6,7 +6,7 @@ import {
   BrowserRouter
 } from "react-router-dom";
 import CardData from './components/CardData';
-import PokedataProvider from "./components/PokedataProvider";
+import PokedataProvider from './lib/PokedataProvider';
 import Nav from "./components/Nav"
 import PokePage from './pages/PokePage';
 
@@ -20,25 +20,18 @@ export default function RootLayout({
   const [ search, setSearch ] = useState('')
   return (
     <>
-      {/* <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      > */}
         <Suspense>
-        <PokedataProvider>
-          <BrowserRouter>
-            <Nav setSearch={setSearch} />
-            <Routes>
-              <Route index element={<CardData keyword={search} />} /> 
-              <Route path="/:name" element={<PokePage />} />
-            </Routes>
-          </BrowserRouter>
-          {children} 
-        </PokedataProvider>
+          <PokedataProvider>
+            <BrowserRouter>
+              <Nav setSearch={setSearch} />
+              <Routes>
+                <Route index element={<CardData keyword={search} />} /> 
+                <Route path="/:name" element={<PokePage />} />
+              </Routes>
+            </BrowserRouter>
+            {children} 
+          </PokedataProvider>
         </Suspense>
-      {/* </ThemeProvider> */}
     </>
   );
 }

@@ -155,7 +155,7 @@ return (
       </Button>
     </div>
     {/* Grid-List Toggle end */}
-    <Tabs defaultValue="all" className="mx-auto flex flex-col flex-grow bg-stone-50 dark:bg-slate-900">
+    <Tabs defaultValue="all" className="flex flex-col flex-grow bg-stone-50 dark:bg-slate-900 ">
       <TabsList className="md:w-3/4 w-full p-8 mx-auto border-t-0 border border-rose-500 border-opacity-30">
         <TabsTrigger value="all" className='flex flex-grow py-4 px-12 text-xl' onClick={() => setActiveTab('all')}>
           <LucideAlbum className='mr-2' />All
